@@ -9,8 +9,15 @@
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/EGM)](https://CRAN.R-project.org/package=EGM)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/EGM?color=blue)](https://cran.r-project.org/package=EGM)
 [![R-CMD-check](https://github.com/shah-in-boots/EGM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/shah-in-boots/EGM/actions/workflows/R-CMD-check.yaml)
+[![pkgdown](https://github.com/shah-in-boots/egm/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/shah-in-boots/egm/actions/workflows/pkgdown.yaml)
 [![test-coverage](https://github.com/shah-in-boots/EGM/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/shah-in-boots/EGM/actions/workflows/test-coverage.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/shah-in-boots/egm/branch/main/graph/badge.svg)](https://app.codecov.io/gh/shah-in-boots/egm?branch=main)
+[![Github commit
+frequency](https://img.shields.io/github/commit-activity/w/shah-in-boots/EGM)](https://github.com/shah-in-boots/EGM/graphs/commit-activity)
+[![DOI](https://zenodo.org/badge/405145024.svg)](https://doi.org/10.5281/zenodo.15244228)
 <!-- badges: end -->
 
 The purpose of `{EGM}` is to work with electrophysiology (EP) signal

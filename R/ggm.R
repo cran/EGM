@@ -64,7 +64,6 @@ ggm <- function(data,
 								palette = NULL,
 								mode = "dark",
 								...) {
-
 	# Global variables (used in data.table)
 	. <- color <- mV <- label <- NULL
 
@@ -109,14 +108,13 @@ ggm <- function(data,
 	exactChannels <- channels[channels %in% .labels]
 	fuzzyChannels <- channels[!(channels %in% .labels)]
 	channelGrep <-
-		paste0(c(paste0("^", exactChannels, "$", collapse = "|"), fuzzyChannels),
-					 collapse = "|")
+		paste0(c(paste0("^", exactChannels, "$", collapse = "|"), fuzzyChannels), collapse = "|")
 	selectedChannels <- grep(channelGrep, availableChannels, value = TRUE)
 	if (length(channels) == 0) {
 		selectedChannels <- availableChannels
 	}
-	stopifnot("The requested channels do not exist within the signal data" =
-							length(selectedChannels) > 0)
+	stopifnot("The requested channels do not exist within the signal data" = length(selectedChannels) >
+							0)
 
 	# Get channel data from individual signals
 	# Need to make sure all that information is present from header
@@ -139,9 +137,9 @@ ggm <- function(data,
 			value.name = "mV"
 		) |>
 		{
-			\(.x)
-			channelData[.x, on = .(label)
-									][, mV := as.numeric(mV)]
+			\(.x) {
+				channelData[.x, on = .(label)][, mV := as.numeric(mV)]
+			}
 		}()
 
 	# Relevel because order is lost in the labels during transformation
@@ -164,8 +162,8 @@ ggm <- function(data,
 								scales = "free_y",
 								strip.position = "left") +
 		scale_colour_identity() +
-		scale_x_continuous(breaks = seq(sampleStart, sampleEnd, by = hz), labels = NULL)
-
+		scale_x_continuous(breaks = seq(sampleStart, sampleEnd, by = hz),
+											 labels = NULL)
 
 	# Update class
 	g <- new_ggm(g, header = hea, annotation = ann)
@@ -175,14 +173,12 @@ ggm <- function(data,
 
 	# Return object if available
 	g
-
 }
 
 new_ggm <- function(object = ggplot(),
 										header = list(),
 										annotation = annotation_table()) {
-
-	stopifnot(is.ggplot(object))
+	stopifnot(is_ggplot(object))
 
 	structure(
 		object,
@@ -190,6 +186,19 @@ new_ggm <- function(object = ggplot(),
 		annotation = annotation,
 		class = c("ggm", class(object))
 	)
+}
+
+# Annotations ------------------------------------------------------------------
+
+#' Add annotations to a `ggm` object
+#'
+#' @description The `add_annotations()` adds annotations to a `ggm` object. It is
+#'   specific to this class as it requires the output of [ggm()] to included
+#'   data stored in [annotation_table()].
+#'
+#' @inheritDotParams ggm
+#' @export
+add_annotations <- function(...) {
 }
 
 # Colors -----------------------------------------------------------------------
@@ -216,7 +225,6 @@ theme_egm <- function() {
 	font <- "Arial"
 	theme_minimal() %+replace%
 		theme(
-
 			# Panels
 			panel.grid.major.y = element_blank(),
 			panel.grid.minor.y = element_blank(),
@@ -248,7 +256,6 @@ theme_egm_light <- function() {
 	list(
 		theme_minimal() %+replace%
 			theme(
-
 				# Panels
 				panel.grid.major.y = element_blank(),
 				panel.grid.minor.y = element_blank(),
@@ -269,9 +276,13 @@ theme_egm_light <- function() {
 
 				# Legend
 				legend.position = "none"
-			)
+			),
 		# If needed to force the colors to be black, can add something like this...
 		#scale_color_manual(values = rep("black", length(.labels)), na.value = "black")
+		scale_color_manual(
+			values = rep("black", length(.labels)),
+			na.value = "black"
+		)
 	)
 }
 
@@ -283,7 +294,6 @@ theme_egm_dark <- function() {
 	list(
 		theme_minimal() %+replace%
 			theme(
-
 				# Panels and background
 				panel.grid.major.y = element_blank(),
 				panel.grid.minor.y = element_blank(),
@@ -302,13 +312,20 @@ theme_egm_dark <- function() {
 
 				# Facets
 				panel.spacing = unit(0, units = "npc"),
-				strip.text.y.left = element_text(angle = 0, hjust = 1, color = "white"),
+				strip.text.y.left = element_text(
+					angle = 0,
+					hjust = 1,
+					color = "white"
+				),
 
 				# Legend
 				legend.position = "none"
-			)
+			),
 		# If needed to force the colors to be white, can add something like this...
 		#scale_color_manual(values = rep("white", length(.labels)), na.value = "white")
+		scale_color_manual(
+			values = rep("white", length(.labels)),
+			na.value = "white"
+		)
 	)
 }
-

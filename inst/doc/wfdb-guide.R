@@ -8,7 +8,7 @@ knitr::opts_chunk$set(
 library(EGM)
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  set_wfdb_path("wsl /usr/local/bin")
+# set_wfdb_path("wsl /usr/local/bin")
 
 ## -----------------------------------------------------------------------------
 fp <- system.file('extdata', 'muse-sinus.xml', package = 'EGM')

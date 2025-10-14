@@ -24,13 +24,13 @@ ggm(ecg) +
 
 ## -----------------------------------------------------------------------------
 # Read in data
-fp <- system.file('extdata', 'lspro-avnrt.txt', package = 'EGM')
-lspro <- readLines(fp)
-head(lspro, n = 20)
+fp <- system.file('extdata', 'bard-avnrt.txt', package = 'EGM')
+bard <- readLines(fp)
+head(bard, n = 20)
 
 # Instead, read this as signal, breaking apart header and signal data
 # Presented as an `egm` class object
-egram <- read_lspro(fp)
+egram <- read_bard(fp)
 egram
 
 # Similarly, can be visualized with ease

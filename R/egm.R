@@ -25,7 +25,7 @@
 #'
 #'   __IMPORTANT__: The `egm` class can be built from ground-up by the user,
 #'   however it is primarily generated for the user using the other read/write
-#'   functions, such as [read_lspro()] or [read_wfdb()].
+#'   functions, such as [read_bard()] or [read_wfdb()].
 #'
 #' @returns An object of class `egm` that is always a list of the above three
 #'   components. Oftentimes, the `annotation_table` object may be missing, and
@@ -84,13 +84,13 @@ format.egm <- function(x, ...) {
 	rec <- attributes(hea)$record_line
 	ann <- x$annotation # May be empty table
 
-	cat('<Electrical Signal>\n')
+	cat('<Electrogram>\n')
 	cat('-------------------\n')
 	cat('Recording Duration: ', rec$samples / rec$frequency, 'seconds\n' )
 	cat('Recording frequency ', rec$frequency, ' hz\n')
 	cat('Number of channels: ', rec$number_of_channels, '\n')
 	cat('Channel Names: ', paste(hea$label), '\n')
-	cat('Annotation: ', attributes(ann)$annotator)
+	cat('Annotation: ', paste(attributes(ann)$annotator), '\n')
 
 }
 
