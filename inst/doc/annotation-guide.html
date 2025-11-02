@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Understanding Annotations</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Understanding Annotations</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(EGM)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt; Attaching package: &#39;EGM&#39;</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt; The following object is masked from &#39;package:stats&#39;:</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co">#&gt;     window</span></span></code></pre></div>
+<!-- 
+Introduction will go here. First start with WFDB annotation standard. Need to describe the current standards for how annotations are documented in WFDB. The general structure will be...
+
+- Give an example of the annotation table and the required elements
+- Show the overall types of annotations that are standard, e.g. the `.surface_annotations`, grouped by the type of annotations that are available to help it be easy to understand
+-->
+<div id="electrocardiogram-annotations" class="section level1">
+<h1>Electrocardiogram Annotations</h1>
+<div id="wfdb-annotation-standards" class="section level2">
+<h2>WFDB Annotation Standards</h2>
+<p>The WFDB (Waveform Database) software package provides a standardized
+system for annotating cardiac signals, predominately surface
+electrocardiogram (<strong>ECG</strong>) data. Annotations are
+polymorphic, meaning multiple annotation sets can be applied to a single
+signal dataset. The limitation is that these are constrained to
+physiological events associated with surface ECGs.</p>
+<div id="annotation-table-structure" class="section level3">
+<h3>Annotation Table Structure</h3>
+<p>All WFDB-compatible annotations in the <code>{EGM}</code> package are
+stored as <code>annotation_table</code> objects. The columns are
+type-specific, which allows them to be easily stored. These tables
+contain the following required columns:</p>
+<ul>
+<li><strong>annotator</strong>: Name of the annotation function or
+creator (e.g., “sqrs”, “ecgpuwave”, “manual”)</li>
+<li><strong>time</strong>: Time stamp constructed from sample number and
+sampling frequency (format: HH:MM:SS.mmm)</li>
+<li><strong>sample</strong>: Integer index of the annotation position in
+the signal</li>
+<li><strong>type</strong>: Single character symbol describing the
+annotation type (see annotation types below)</li>
+<li><strong>subtype</strong>: Single character providing additional
+classification</li>
+<li><strong>channel</strong>: Integer indicating which signal channel
+the annotation applies to</li>
+<li><strong>number</strong>: Additional numeric qualifier providing
+context-specific information</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Create annotations for detected R-peaks</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co"># Example</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>ann <span class="ot">&lt;-</span> <span class="fu">annotation_table</span>(</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="at">annotator =</span> <span class="st">&quot;qrs&quot;</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="at">sample =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">350</span>, <span class="dv">600</span>, <span class="dv">850</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">&quot;N&quot;</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  <span class="at">frequency =</span> <span class="dv">250</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>  <span class="at">channel =</span> <span class="dv">0</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>)</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co"># Print</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>ann</span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt; &lt;annotation_table: 4 `qrs` annotations&gt;</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt;          time sample   type subtype channel number</span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt;        &lt;char&gt;  &lt;num&gt; &lt;char&gt;  &lt;char&gt;   &lt;num&gt;  &lt;int&gt;</span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#&gt; 1: 00:00:00.4    100      N               0      0</span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="co">#&gt; 2: 00:00:01.4    350      N               0      0</span></span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#&gt; 3: 00:00:02.4    600      N               0      0</span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#&gt; 4: 00:00:03.4    850      N               0      0</span></span></code></pre></div>
+</div>
+</div>
+<div id="standard-ecg-annotation-types" class="section level2">
+<h2>Standard ECG Annotation Types</h2>
+<p>The WFDB standard defines 41 annotation types for surface
+electrocardiograms. These annotations can be broadly grouped into
+several categories:</p>
+<div id="beat-annotations" class="section level3">
+<h3>Beat Annotations</h3>
+<p>Beat annotations mark individual cardiac cycles and their
+characteristics:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Load internal annotation data</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>beat_symbols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;N&quot;</span>, <span class="st">&quot;L&quot;</span>, <span class="st">&quot;R&quot;</span>, <span class="st">&quot;a&quot;</span>, <span class="st">&quot;V&quot;</span>, <span class="st">&quot;F&quot;</span>, <span class="st">&quot;J&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;S&quot;</span>, <span class="st">&quot;E&quot;</span>, <span class="st">&quot;j&quot;</span>, <span class="st">&quot;/&quot;</span>, <span class="st">&quot;Q&quot;</span>, <span class="st">&quot;~&quot;</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>beat_labels <span class="ot">&lt;-</span> EGM<span class="sc">:::</span>.surface_annotations[EGM<span class="sc">:::</span>.surface_annotations<span class="sc">$</span>symbol <span class="sc">%in%</span> beat_symbols, ]</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  beat_labels[, <span class="fu">c</span>(<span class="st">&quot;symbol&quot;</span>, <span class="st">&quot;mnemonic&quot;</span>, <span class="st">&quot;description&quot;</span>)],</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>  <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Symbol&quot;</span>, <span class="st">&quot;Mnemonic&quot;</span>, <span class="st">&quot;Description&quot;</span>),</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="at">row.names =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">&quot;Beat Annotation Types&quot;</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>)</span></code></pre></div>
+<table>
+<caption>Beat Annotation Types</caption>
+<thead>
+<tr class="header">
+<th align="left">Symbol</th>
+<th align="left">Mnemonic</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">N</td>
+<td align="left">NORMAL</td>
+<td align="left">Normal beat</td>
+</tr>
+<tr class="even">
+<td align="left">L</td>
+<td align="left">LBBB</td>
+<td align="left">Left bundle branch block beat</td>
+</tr>
+<tr class="odd">
+<td align="left">R</td>
+<td align="left">RBBB</td>
+<td align="left">Right bundle branch block beat</td>
+</tr>
+<tr class="even">
+<td align="left">a</td>
+<td align="left">ABERR</td>
+<td align="left">Aberrated atrial premature beat</td>
+</tr>
+<tr class="odd">
+<td align="left">V</td>
+<td align="left">PVC</td>
+<td align="left">Premature ventricular contraction</td>
+</tr>
+<tr class="even">
+<td align="left">F</td>
+<td align="left">FUSION</td>
+<td align="left">Fusion of ventricular and normal beat</td>
+</tr>
+<tr class="odd">
+<td align="left">J</td>
+<td align="left">NPC</td>
+<td align="left">Nodal (junctional) premature beat</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">APC</td>
+<td align="left">Atrial premature contraction</td>
+</tr>
+<tr class="odd">
+<td align="left">S</td>
+<td align="left">SVPB</td>
+<td align="left">Premature or ectopic supraventricular beat</td>
+</tr>
+<tr class="even">
+<td align="left">E</td>
+<td align="left">VESC</td>
+<td align="left">Ventricular escape beat</td>
+</tr>
+<tr class="odd">
+<td align="left">j</td>
+<td align="left">NESC</td>
+<td align="left">Nodal (junctional) escape beat</td>
+</tr>
+<tr class="even">
+<td align="left">/</td>
+<td align="left">PACE</td>
+<td align="left">Paced beat</td>
+</tr>
+<tr class="odd">
+<td align="left">Q</td>
+<td align="left">UNKNOWN</td>
+<td align="left">Unclassifiable beat</td>
+</tr>
+<tr class="even">
+<td align="left">~</td>
+<td align="left">NOISE</td>
+<td align="left">Signal quality change</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key beat types:</strong></p>
+<ul>
+<li><strong>N (NORMAL)</strong>: Normal sinus beat</li>
+<li><strong>V (PVC)</strong>: Premature ventricular contraction</li>
+<li><strong>A (APC)</strong>: Atrial premature contraction</li>
+<li><strong>L/R (LBBB/RBBB)</strong>: Bundle branch block beats</li>
+<li><strong>F (FUSION)</strong>: Fusion of ventricular and normal
+beat</li>
+<li><strong>/ (PACE)</strong>: Paced beat</li>
+</ul>
+</div>
+<div id="waveform-boundary-annotations" class="section level3">
+<h3>Waveform Boundary Annotations</h3>
+<p>These mark the beginning, peak, and end of ECG waveforms:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>wave_symbols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;p&quot;</span>, <span class="st">&quot;t&quot;</span>, <span class="st">&quot;u&quot;</span>, <span class="st">&quot;(&quot;</span>, <span class="st">&quot;)&quot;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>wave_labels <span class="ot">&lt;-</span> EGM<span class="sc">:::</span>.surface_annotations[EGM<span class="sc">:::</span>.surface_annotations<span class="sc">$</span>symbol <span class="sc">%in%</span> wave_symbols, ]</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  wave_labels[, <span class="fu">c</span>(<span class="st">&quot;symbol&quot;</span>, <span class="st">&quot;mnemonic&quot;</span>, <span class="st">&quot;description&quot;</span>)],</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Symbol&quot;</span>, <span class="st">&quot;Mnemonic&quot;</span>, <span class="st">&quot;Description&quot;</span>),</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="at">row.names =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">&quot;Waveform Boundary Annotations&quot;</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>)</span></code></pre></div>
+<table>
+<caption>Waveform Boundary Annotations</caption>
+<thead>
+<tr class="header">
+<th align="left">Symbol</th>
+<th align="left">Mnemonic</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">p</td>
+<td align="left">PWAVE</td>
+<td align="left">P-wave peak</td>
+</tr>
+<tr class="even">
+<td align="left">t</td>
+<td align="left">TWAVE</td>
+<td align="left">T-wave peak</td>
+</tr>
+<tr class="odd">
+<td align="left">u</td>
+<td align="left">UWAVE</td>
+<td align="left">U-wave peak</td>
+</tr>
+<tr class="even">
+<td align="left">(</td>
+<td align="left">WFON</td>
+<td align="left">Waveform onset</td>
+</tr>
+<tr class="odd">
+<td align="left">)</td>
+<td align="left">WFOFF</td>
+<td align="left">Waveform end</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="rhythm-and-signal-quality-annotations" class="section level3">
+<h3>Rhythm and Signal Quality Annotations</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>rhythm_symbols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;+&quot;</span>, <span class="st">&quot;|&quot;</span>, <span class="st">&quot;s&quot;</span>, <span class="st">&quot;T&quot;</span>, <span class="st">&quot;~&quot;</span>, <span class="st">&quot;x&quot;</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>rhythm_labels <span class="ot">&lt;-</span> EGM<span class="sc">:::</span>.surface_annotations[EGM<span class="sc">:::</span>.surface_annotations<span class="sc">$</span>symbol <span class="sc">%in%</span> rhythm_symbols, ]</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  rhythm_labels[, <span class="fu">c</span>(<span class="st">&quot;symbol&quot;</span>, <span class="st">&quot;mnemonic&quot;</span>, <span class="st">&quot;description&quot;</span>)],</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Symbol&quot;</span>, <span class="st">&quot;Mnemonic&quot;</span>, <span class="st">&quot;Description&quot;</span>),</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  <span class="at">row.names =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">&quot;Rhythm and Signal Quality Annotations&quot;</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>)</span></code></pre></div>
+<table>
+<caption>Rhythm and Signal Quality Annotations</caption>
+<thead>
+<tr class="header">
+<th align="left">Symbol</th>
+<th align="left">Mnemonic</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">~</td>
+<td align="left">NOISE</td>
+<td align="left">Signal quality change</td>
+</tr>
+<tr class="even">
+<td align="left">|</td>
+<td align="left">ARFCT</td>
+<td align="left">Isolated QRS-like artifact</td>
+</tr>
+<tr class="odd">
+<td align="left">s</td>
+<td align="left">STCH</td>
+<td align="left">ST change</td>
+</tr>
+<tr class="even">
+<td align="left">T</td>
+<td align="left">TCH</td>
+<td align="left">T-wave change</td>
+</tr>
+<tr class="odd">
+<td align="left">+</td>
+<td align="left">RHYTHM</td>
+<td align="left">Rhythm change</td>
+</tr>
+<tr class="even">
+<td align="left">x</td>
+<td align="left">NAPC</td>
+<td align="left">Non-conducted P-wave (blocked APB)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="specialized-annotations" class="section level3">
+<h3>Specialized Annotations</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>special_symbols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;*&quot;</span>, <span class="st">&quot;D&quot;</span>, <span class="st">&quot;</span><span class="sc">\&quot;</span><span class="st">&quot;</span>, <span class="st">&quot;=&quot;</span>, <span class="st">&quot;!&quot;</span>, <span class="st">&quot;[&quot;</span>, <span class="st">&quot;]&quot;</span>, <span class="st">&quot;@&quot;</span>, <span class="st">&quot;r&quot;</span>, <span class="st">&quot;^&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;e&quot;</span>, <span class="st">&quot;n&quot;</span>, <span class="st">&quot;f&quot;</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>special_labels <span class="ot">&lt;-</span> EGM<span class="sc">:::</span>.surface_annotations[EGM<span class="sc">:::</span>.surface_annotations<span class="sc">$</span>symbol <span class="sc">%in%</span> special_symbols, ]</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  special_labels[, <span class="fu">c</span>(<span class="st">&quot;symbol&quot;</span>, <span class="st">&quot;mnemonic&quot;</span>, <span class="st">&quot;description&quot;</span>)],</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Symbol&quot;</span>, <span class="st">&quot;Mnemonic&quot;</span>, <span class="st">&quot;Description&quot;</span>),</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  <span class="at">row.names =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">&quot;Specialized Annotations&quot;</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>)</span></code></pre></div>
+<table>
+<caption>Specialized Annotations</caption>
+<thead>
+<tr class="header">
+<th align="left">Symbol</th>
+<th align="left">Mnemonic</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">*</td>
+<td align="left">SYSTOLE</td>
+<td align="left">Systole</td>
+</tr>
+<tr class="even">
+<td align="left">D</td>
+<td align="left">DIASTOLE</td>
+<td align="left">Diastole</td>
+</tr>
+<tr class="odd">
+<td align="left">”</td>
+<td align="left">NOTE</td>
+<td align="left">Comment annotation</td>
+</tr>
+<tr class="even">
+<td align="left">=</td>
+<td align="left">MEASURE</td>
+<td align="left">Measurement annotation</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">BBB</td>
+<td align="left">Left or right bundle branch block</td>
+</tr>
+<tr class="even">
+<td align="left">^</td>
+<td align="left">PACESP</td>
+<td align="left">Non-conducted pacer spike</td>
+</tr>
+<tr class="odd">
+<td align="left">!</td>
+<td align="left">FLWAV</td>
+<td align="left">Ventricular flutter wave</td>
+</tr>
+<tr class="even">
+<td align="left">[</td>
+<td align="left">VFON</td>
+<td align="left">Start of ventricular flutter/fibrillation</td>
+</tr>
+<tr class="odd">
+<td align="left">]</td>
+<td align="left">VFOFF</td>
+<td align="left">End of ventricular flutter/fibrillation</td>
+</tr>
+<tr class="even">
+<td align="left">e</td>
+<td align="left">AESC</td>
+<td align="left">Atrial escape beat</td>
+</tr>
+<tr class="odd">
+<td align="left">n</td>
+<td align="left">SVESC</td>
+<td align="left">Supraventricular escape beat</td>
+</tr>
+<tr class="even">
+<td align="left">@</td>
+<td align="left">LINK</td>
+<td align="left">Link to external data (aux_note contains URL)</td>
+</tr>
+<tr class="odd">
+<td align="left">f</td>
+<td align="left">PFUS</td>
+<td align="left">Fusion of paced and normal beat</td>
+</tr>
+<tr class="even">
+<td align="left">r</td>
+<td align="left">RONT</td>
+<td align="left">R-on-T premature ventricular contraction</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="common-annotation-file-types" class="section level2">
+<h2>Common Annotation File Types</h2>
+<p>When working with WFDB files, annotations are stored with specific
+file extensions that indicate the annotator used:</p>
+<ul>
+<li><strong><code>.atr</code></strong>: Manually reviewed and corrected
+reference annotations</li>
+<li><strong><code>.ann</code></strong>: General annotation file</li>
+<li><strong><code>.ecgpuwave</code></strong>: Surface ECG wave
+boundaries (P, QRS, T waves) generated by the ecgpuwave algorithm</li>
+<li><strong><code>.sqrs</code>, <code>.wqrs</code>,
+<code>.gqrs</code></strong>: R-peak detections from different QRS
+detection algorithms</li>
+</ul>
+</div>
+<div id="accessing-all-standard-annotations" class="section level2">
+<h2>Accessing All Standard Annotations</h2>
+<p>The complete list of standard WFDB annotations can be accessed
+using:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># View all standard ECG annotation types</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="fu">wfdb_annotation_labels</span>()</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co"># Filter for specific symbols</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="fu">wfdb_annotation_labels</span>(<span class="at">symbol =</span> <span class="fu">c</span>(<span class="st">&quot;N&quot;</span>, <span class="st">&quot;V&quot;</span>, <span class="st">&quot;A&quot;</span>))</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co"># Decode annotations in an existing annotation table</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>ann <span class="ot">&lt;-</span> <span class="fu">annotation_table</span>(</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>  <span class="at">annotator =</span> <span class="st">&quot;example&quot;</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>  <span class="at">sample =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">200</span>),</span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">c</span>(<span class="st">&quot;N&quot;</span>, <span class="st">&quot;V&quot;</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>)</span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co"># Add human-readable descriptions</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="fu">wfdb_annotation_decode</span>(ann)</span></code></pre></div>
+</div>
+<div id="example-working-with-ecg-annotations" class="section level2">
+<h2>Example: Working with ECG Annotations</h2>
+<p>Here’s a practical example of reading, interpreting, and visualizing
+ECG annotations:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># Read an ECG with annotations</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>record_path <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&#39;extdata&#39;</span>, <span class="at">package =</span> <span class="st">&#39;EGM&#39;</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>ecg <span class="ot">&lt;-</span> <span class="fu">read_wfdb</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="at">record =</span> <span class="st">&quot;muse-sinus&quot;</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="at">record_dir =</span> record_path</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>)</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co"># Read associated annotations (if they exist)</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>ann <span class="ot">&lt;-</span> <span class="fu">read_annotation</span>(</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>   <span class="at">record =</span> <span class="st">&quot;muse-sinus&quot;</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>   <span class="at">annotator =</span> <span class="st">&quot;ecgpuwave&quot;</span>,</span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>   <span class="at">record_dir =</span> record_path</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>)</span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="co"># Decode annotation types</span></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>ann_decoded <span class="ot">&lt;-</span> <span class="fu">wfdb_annotation_decode</span>(ann)</span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="fu">head</span>(ann_decoded)</span></code></pre></div>
+</div>
+</div>
+<div id="intracardiac-electrogram-annotations" class="section level1">
+<h1>Intracardiac Electrogram Annotations</h1>
+<!--
+This section is on the intracardiac annotation options. The intracardiac has to have a similar and compatible structure, with the same variable types.
+
+The type includes:
+
+- a = Atrial
+- v = Ventricular
+- h = His bundle recording
+- f = Fascicular potential
+
+The subtypes 
+-->
+<p>This is a work in progress, where we aim to define and implement a
+comprehensive set of annotations for intracardiac electrograms that are
+compatible with the standard WFDB annotation system.</p>
+</div>
+<div id="examples" class="section level1">
+<h1>Examples</h1>
+<div id="ecgpuwave" class="section level2">
+<h2><code>ecgpuwave</code></h2>
+<p>One of the common annotators used, called <a href="https://physionet.org/content/ecgpuwave/1.3.4/"><code>ecgpuwave</code></a>,
+demonstrates how the annotation system is leveraged.</p>
+<p>The standard labels are used:</p>
+<ul>
+<li><strong>p (PWAVE)</strong>: P-wave peak</li>
+<li><strong>t (TWAVE)</strong>: T-wave peak</li>
+<li><strong>( (WFON)</strong>: Waveform onset</li>
+<li><strong>) (WFOFF)</strong>: Waveform end</li>
+</ul>
+<p>When using waveform boundary annotations like <code>(</code> and
+<code>)</code>, the <strong>number</strong> column specifies which
+waveform:</p>
+<ul>
+<li>0 = P wave</li>
+<li>1 = QRS complex</li>
+<li>2 = T wave</li>
+</ul>
+<p>For T-wave annotations (<code>t</code>), the <strong>number</strong>
+column describes morphology:</p>
+<ul>
+<li>0 = Normal</li>
+<li>1 = Inverted</li>
+<li>2 = Positive</li>
+<li>3 = Negative</li>
+<li>4 = Biphasic (negative-positive)</li>
+<li>5 = Biphasic (positive-negative)</li>
+</ul>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
